@@ -10,7 +10,6 @@ class Solution:
 
         carry = 0
         while p1 or p2:
-            digSum = 0
             if p1 and p2:
                 digSum = p1.val + p2.val + carry
             elif p1:
