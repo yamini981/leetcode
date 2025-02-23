@@ -1,27 +1,26 @@
 class Solution:
     def minSubArrayLen(self, target: int, nums: List[int]) -> int:
-        # sliding window
-        l, r = 0, 0
-        best = len(nums) + 1
-        currTotal = 0
-        changeR = True
+        # looks like standard sliding window here
+        # if you're bigger than the target OR even equal to the target, increment left pointer
+        # if you're less than the target, incremetn right pointer
+
+        l,r = 0, 0
+        currSum = nums[l]
+        minLen = len(nums) + 1
 
         while r < len(nums):
-            if changeR:
-                currTotal += nums[r]
-            if currTotal >= target:
-                if r == l:
-                    return 1
-                best = min(best, r - l + 1)
-                currTotal -= nums[l]
-                l += 1
-                changeR = False
-            else:
+            if currSum < target:
                 r += 1
-                changeR = True
-
-        if best == len(nums) + 1:
+                if r >= len(nums):
+                    break
+                currSum += nums[r]
+            elif currSum >= target:
+                minLen = min(minLen, r - l + 1)
+                currSum -= nums[l]
+                l += 1
+        
+        if minLen == len(nums) + 1:
             return 0
         else:
-            return best
-            
+            return minLen
+        
