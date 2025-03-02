@@ -1,19 +1,25 @@
 class Solution:
     def merge(self, intervals: List[List[int]]) -> List[List[int]]:
-        res = []
+        # could make copy if necessary
+        intervals.sort() 
 
-        intervals.sort()
-        currMerge = [intervals[0][0], intervals[0][1]]
+        ans = []
 
-        for i in range(1, len(intervals)):
-            currInterval = intervals[i]
+        # make a copy
+        currInterval = [intervals[0][0], intervals[0][1]]
+        ans.append(currInterval)
 
-            if currMerge[1] >= currInterval[0]:
-                currMerge[1] = max(currMerge[1], currInterval[1])
+        for start, end in intervals[1:]:
+            if start <= currInterval[1] and currInterval[1] >= end:
+                # do nothing - you're already encapsulated
+                continue
+            elif start <= currInterval[1]:
+                currInterval[1] = end
             else:
-                res.append(currMerge)
-                currMerge = [currInterval[0], currInterval[1]]
+                currInterval = [start, end]
+                ans.append(currInterval)
 
-        res.append(currMerge)
+        return ans
 
-        return res
+
+
