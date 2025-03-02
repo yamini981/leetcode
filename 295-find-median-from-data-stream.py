@@ -1,44 +1,55 @@
 class MedianFinder:
 
-    # we need O(1) access
-    # we need to keep the structure sorted (O(1) insertion)
-    # thinking ordered map with frequencies?
-    # Hashset with frequencies - adding Number would be O(1)
-
-    # I don't think this is possible so what should be sacrificed?
-        # could maybe combine two data structures?
-    # I think ordered is necessary for median... otherwise we'd have to sort it which is just bad
-    # could be tree?
     def __init__(self):
-        # two heaps, small and large
-        self.small, self.large = [], []
-
+        self.numElements = 0
+        self.minHeap = []
+        self.maxHeap = []
+        self.currMedian = None
     def addNum(self, num: int) -> None:
-        heapq.heappush(self.small, -1 * num) # -1 to make it a max heap
+        if self.numElements == 0:
+            self.minHeap.append(num)
+            self.currMedian = num
+        else:
+            if num <= self.currMedian:
+                # add to maxHeap, but what if maxHeap is bigger then minHeap?
+                # we need to pop from maxHeap and add to minHeap then push new val
+                # onto maxHeap
+                if len(self.maxHeap) == len(self.minHeap):
+                    heapq.heappush(self.maxHeap, -1 * num)
+                    self.currMedian = -1*self.maxHeap[0]
+                elif len(self.maxHeap) < len(self.minHeap):
+                    heapq.heappush(self.maxHeap, -1 * num)
+                    self.currMedian = (-1*self.maxHeap[0] + self.minHeap[0]) / 2
+                elif len(self.maxHeap) > len(self.minHeap):
+                    poppedMax = heapq.heappop(self.maxHeap) * -1
+                    heapq.heappush(self.minHeap, poppedMax)
+                    heapq.heappush(self.maxHeap, -1 * num)
+                    self.currMedian = (-1*self.maxHeap[0] + self.minHeap[0]) / 2
+            else:
+                # add to minHeap, but what if minHeap is longer than maxHeap?
+                # need to pop from minHeap and add to maxHeap then push new val
+                # onto minHeap
+                if len(self.maxHeap) == len(self.minHeap):
+                    heapq.heappush(self.minHeap, num)
+                    self.currMedian = self.minHeap[0]
+                elif len(self.minHeap) < len(self.maxHeap):
+                    heapq.heappush(self.minHeap, num)
+                    self.currMedian = (-1*self.maxHeap[0] + self.minHeap[0]) / 2
+                elif len(self.minHeap) > len(self.maxHeap):
+                    poppedMin = heapq.heappop(self.minHeap)
+                    heapq.heappush(self.maxHeap, -1*poppedMin)
+                    heapq.heappush(self.minHeap, num)
+                    self.currMedian = (-1*self.maxHeap[0] + self.minHeap[0]) / 2
+        self.numElements += 1
 
-        # make sure every element is <= every element in large (move from small to large if not)
-        if (self.small and self.large and 
-            (self.small[0] * -1 > self.large[0])):
-            val = -1 * heapq.heappop(self.small)
-            heapq.heappush(self.large, val)
+
         
-        # what if the size is uneven?
-
-        if len(self.small) > len(self.large) + 1:
-            val = -1 * heapq.heappop(self.small)
-            heapq.heappush(self.large, val)
-        if len(self.large) > len(self.small) + 1:
-            val = heapq.heappop(self.large)
-            heapq.heappush(self.small, val * -1 )
-
 
     def findMedian(self) -> float:
-        if len(self.small) > len(self.large):
-            return self.small[0] * -1
-        if len(self.large) > len(self.small):
-            return self.large[0]
+        return self.currMedian
+        
 
-        return (self.small[0]*-1 + self.large[0]) / 2
+
 # Your MedianFinder object will be instantiated and called as such:
 # obj = MedianFinder()
 # obj.addNum(num)
