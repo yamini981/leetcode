@@ -1,17 +1,13 @@
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
-        hmap = defaultdict(list)
+        hashmap = defaultdict(list)
 
-        for i, num in enumerate(nums):
-            hmap[num].append(i)
-        
-        
-        for i, num in enumerate(nums):
-            if target - num in hmap:
-                if target - num == num:
-                    if len(hmap[target-num]) >= 2:
-                        return [i, hmap[target-num][1]]
-                    else:
-                        continue
+        for i in range(len(nums)):
+            hashmap[nums[i]].append(i)
+            valToFind = target - nums[i]
+            if valToFind in hashmap:
+                if valToFind == nums[i]:
+                    if len(hashmap[valToFind]) == 2:
+                        return [i, hashmap[valToFind][0]]
                 else:
-                    return [i, hmap[target-num][0]]
+                    return [i, hashmap[valToFind][0]]
